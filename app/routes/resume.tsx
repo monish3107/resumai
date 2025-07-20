@@ -23,6 +23,15 @@ const Resume = () => {
     }, [isLoading])
 
     useEffect(() => {
+        const mapFeedback = (raw: any) => ({
+            overallScore: raw.overall_rating ?? 0,
+            toneAndStyle: { score: raw.tone_and_style ?? 0, tips: raw.tone_and_style_tips ?? [] },
+            content: { score: raw.content_quality ?? 0, tips: raw.content_tips ?? [] },
+            structure: { score: raw.format_and_structure ?? 0, tips: raw.structure_tips ?? [] },
+            skills: { score: raw.relevance_to_job ?? 0, tips: raw.skills_tips ?? [] },
+            ATS: { score: raw.ats_compatibility ?? 0, tips: raw.ats_tips ?? [] },
+            // ...add other mappings as needed
+        });
         const loadResume = async () => {
             const resume = await kv.get(`resume:${id}`);
 
@@ -42,7 +51,8 @@ const Resume = () => {
             const imageUrl = URL.createObjectURL(imageBlob);
             setImageUrl(imageUrl);
 
-            setFeedback(data.feedback);
+            // Map feedback to expected structure
+            setFeedback(mapFeedback(data.feedback));
             console.log({resumeUrl, imageUrl, feedback: data.feedback });
         }
 
@@ -76,11 +86,11 @@ const Resume = () => {
                     {feedback ? (
                         <div className="flex flex-col gap-8 animate-in fade-in duration-1000">
                             <Summary feedback={feedback} />
-                            <ATS score={feedback.ATS.score || 0} suggestions={feedback.ATS.tips || []} />
+                            <ATS score={feedback.ATS?.score || 0} suggestions={feedback.ATS?.tips || []} />
                             <Details feedback={feedback} />
                         </div>
                     ) : (
-                        <img src="/images/resume-scan-2.gif" className="w-full" alt="scanner" />
+                        <img src="/images/resume-scan-2.gif" alt="glass" className="w-full" />
                     )}
                 </section>
             </div>

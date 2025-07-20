@@ -48,7 +48,11 @@ const Upload = () => {
 
         const feedback = await ai.feedback(
             uploadedFile.path,
-            prepareInstructions({ jobTitle, jobDescription })
+            prepareInstructions({
+                jobTitle,
+                jobDescription,
+                AIResponseFormat: "your format here"
+            })
         )
         if (!feedback) return setStatusText('Error: Failed to analyze resume');
 
